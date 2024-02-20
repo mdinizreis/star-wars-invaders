@@ -1,0 +1,83 @@
+/*====================
+- Game container settings
+-Background image from space taken from telescope Hubble https://esahubble.org/images/heic1304c/
+====================*/
+#game-container {
+  position: relative;
+  width: 1200px;
+  height: 800px;
+  background-image: url("assets/background.jpg");
+  border: 1px solid black;
+  margin: 0 auto;
+}
+
+/*====================
+- player settings
+- Resized Millenium Falcon image from https://dribbble.com/shots/14279576-Millennium-Falcon*
+====================*/
+#player {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  /* background-color: blue; */
+  background-image: url("assets/player.png");
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/*====================
+
+====================*/
+.enemy {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  /* background-color: white; */
+  background-image: url("assets/enemy.png");
+}
+
+/*====================
+
+====================*/
+.bullet {
+  position: absolute;
+  width: 5px;
+  height: 20px;
+  /*background-image: url("assets/bullet2.png");*/
+  background-color: yellow;
+}
+
+/*====================
+
+====================*/
+#to-do-container {
+  position: relative;
+  display: inline-grid; /*adjust disply to the size of the grid instead of the width of the screen*/
+  grid-template-columns: 150px 700px 150px 300px; /*size of each colum*/
+  grid-template-rows: 400px 400px; /*size of each row*/
+}
+
+#must-have-header {
+  display: flex;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+#must-have-list {
+  display: flex;
+  grid-column: 2;
+  grid-row: 1;
+}
+
+#nice-have-header {
+  display: flex;
+  grid-column: 3;
+  grid-row: 1;
+}
+
+#nice-have-list {
+  display: flex;
+  grid-column: 4;
+  grid-row: 1;
+}
