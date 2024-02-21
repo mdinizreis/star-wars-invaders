@@ -4,68 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Star Wars Invaders</title>
+    <link rel="icon" type="image/x-icon" href="./assets/starwars.ico" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>MVP - Star Wars Invaders</h1>
     <div id="game-container">
+      <div>
+        <h4 id="scoreLabel">Score:</h4>
+        <p id="scoreValue"></p>
+      </div>
       <div id="player"></div>
-    </div>
-    <div id="to-do-container">
-      <div id="must-have-header">
-        <h2>To do List:</h2>
-      </div>
-      <div id="must-have-list">
-        <ul>
-          <li>[½] Game Setup</li>
-          <ul>
-            <li>[✔] Set up the game container using HTML</li>
-            <li>
-              [✔] Style the game container and game objects using CSS (visual
-              appearance of the game)
-            </li>
-            <li>[ ] Create initial / pre-game screen</li>
-            <li>[✔] Create Background stars</li>
-          </ul>
-          <li>[½] Create main entities</li>
-          <ul>
-            <li>[✔] Create Player</li>
-            <li>[✔] Move Player</li>
-            <li>[✔] Create Enemies</li>
-            <li>[ ] Create and move grid of Enemies</li>
-            <li>[ ] Create bullets</li>
-          </ul>
-          <li>[ ] Create Game Logic</li>
-          <ul>
-            <li>[ ] Shoot Enemies / Move Bullet</li>
-            <li>
-              [ ] Collision detection to check for collisions between bullets
-              and enemies, and handle the resulting actions.
-            </li>
-            <li>
-              [ ] Update the positions and styles of the game objects
-              dynamically by manipulating the CSS properties of the HTML
-              elements.
-            </li>
-            <li>[ ] Lose Conditions</li>
-            <li>
-              [ ] Score: Keep track of the game score and display it on the
-              screen.
-            </li>
-          </ul>
-        </ul>
-      </div>
-      <div id="nice-have-header">
-        <h2>If time allows:</h2>
-      </div>
-      <div id="nice-have-list">
-        <ul>
-          <li>[ ] Sound effects</li>
-          <li>[ ] Music?</li>
-          <li>[ ] Progressively harder enemies</li>
-          <li>[ ] Enemies shoot back</li>
-        </ul>
-      </div>
     </div>
     <script src="script.js" />
   </body>

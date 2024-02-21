@@ -1,9 +1,10 @@
 /*====================
-- Game container settings
--Background image from space taken from telescope Hubble https://esahubble.org/images/heic1304c/
+GAME CONTAINER SETTINGS
+- Size: 1200 x 800px (width x height)
+- Background image: space photo taken from telescope Hubble https://esahubble.org/images/heic1304c/
 ====================*/
 #game-container {
-  position: relative;
+  position: absolute;
   width: 1200px;
   height: 800px;
   background-image: url("assets/background.jpg");
@@ -11,73 +12,51 @@
   margin: 0 auto;
 }
 
+#scoreLabel {
+  position: relative;
+  width: 50px;
+  height: 5px;
+  color: rgb(183, 183, 63);
+}
+
+#scoreValue {
+  position: relative;
+  width: 50px;
+  height: 5px;
+  color: rgb(183, 183, 63);
+}
 /*====================
-- player settings
+PLAYER STYLE SETTINGS
+- Size: 50 X 50px (width x height)
 - Resized Millenium Falcon image from https://dribbble.com/shots/14279576-Millennium-Falcon*
 ====================*/
 #player {
   position: absolute;
   width: 50px;
   height: 50px;
-  /* background-color: blue; */
   background-image: url("assets/player.png");
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
 }
 
 /*====================
-
+ENEMY STYLE SETTINGS
+- Size: 50 X 50px (width x height)
 ====================*/
 .enemy {
   position: absolute;
   width: 50px;
   height: 50px;
-  /* background-color: white; */
   background-image: url("assets/enemy.png");
 }
 
 /*====================
-
+BULLET STYLE SETTINGS
+- Size: 5 X 20px (width x height)
 ====================*/
 .bullet {
   position: absolute;
-  width: 5px;
-  height: 20px;
-  /*background-image: url("assets/bullet2.png");*/
-  background-color: yellow;
-}
-
-/*====================
-
-====================*/
-#to-do-container {
-  position: relative;
-  display: inline-grid; /*adjust disply to the size of the grid instead of the width of the screen*/
-  grid-template-columns: 150px 700px 150px 300px; /*size of each colum*/
-  grid-template-rows: 400px 400px; /*size of each row*/
-}
-
-#must-have-header {
-  display: flex;
-  grid-column: 1;
-  grid-row: 1;
-}
-
-#must-have-list {
-  display: flex;
-  grid-column: 2;
-  grid-row: 1;
-}
-
-#nice-have-header {
-  display: flex;
-  grid-column: 3;
-  grid-row: 1;
-}
-
-#nice-have-list {
-  display: flex;
-  grid-column: 4;
-  grid-row: 1;
+  width: 10px;
+  height: 28px;
+  background-image: url("assets/bullet.png");
 }
