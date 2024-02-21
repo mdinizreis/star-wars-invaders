@@ -4,16 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Star Wars Invaders</title>
+    <!-- Set page icon -->
     <link rel="icon" type="image/x-icon" href="./assets/starwars.ico" />
     <link rel="stylesheet" href="style.css" />
+    <!-- Import ''Press enter to play! font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Import Star Wars Label Font -->
+    <link href="https://fonts.cdnfonts.com/css/star-wars" rel="stylesheet" />
   </head>
   <body>
     <div id="game-container">
-      <div>
-        <h4 id="scoreLabel">Score:</h4>
-        <p id="scoreValue"></p>
+      <div id="initial-screen">
+        <h1 id="game-name-label">star wars invaders</h1>
+        <p id="enter-to-play">Press enter to play!</p>
+        <p id="move-instructions">← → - Move ship left or right</p>
+        <p id="fire-instructions">SPACE - Fire!</p>
       </div>
-      <div id="player"></div>
     </div>
     <script src="script.js" />
   </body>

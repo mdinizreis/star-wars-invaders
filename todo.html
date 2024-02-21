@@ -27,10 +27,22 @@
       #nice-have-header {
         display: flex;
         grid-column: 3;
-        grid-row: 1;
+        grid-row: 2;
       }
 
       #nice-have-list {
+        display: flex;
+        grid-column: 4;
+        grid-row: 2;
+      }
+
+      #known-issues-header {
+        display: flex;
+        grid-column: 3;
+        grid-row: 1;
+      }
+
+      #known-issues-list {
         display: flex;
         grid-column: 4;
         grid-row: 1;
@@ -44,17 +56,17 @@
       </div>
       <div id="must-have-list">
         <ul>
-          <li>[½] Game Setup</li>
+          <li>[✔] Game Setup</li>
           <ul>
             <li>[✔] Set up the game container using HTML</li>
             <li>
               [✔] Style the game container and game objects using CSS (visual
               appearance of the game)
             </li>
-            <li>[ ] Create initial / pre-game screen</li>
+            <li>[✔] Create initial / pre-game screen</li>
             <li>[✔] Create Background stars</li>
           </ul>
-          <li>[½] Create main entities</li>
+          <li>[ ] Create main entities</li>
           <ul>
             <li>[✔] Create Player</li>
             <li>[✔] Move Player</li>
@@ -70,11 +82,12 @@
               and enemies, and handle the resulting actions.
             </li>
             <li>
-              [ ] Update the positions and styles of the game objects
+              [✔] Update the positions and styles of the game objects
               dynamically by manipulating the CSS properties of the HTML
               elements.
             </li>
             <li>[ ] Lose Conditions</li>
+            <li>[ ] Winning Conditions</li>
             <li>
               [✔] Score: Keep track of the game score and display it on the
               screen.
@@ -90,7 +103,20 @@
           <li>[ ] Sound effects</li>
           <li>[ ] Music?</li>
           <li>[ ] Progressively harder enemies</li>
+          <li>[ ] High Score table at initial screen</li>
+          <li>[ ] Enemy Wave counter</li>
           <li>[ ] Enemies shoot back</li>
+        </ul>
+      </div>
+      <div id="known-issues-header">
+        <h2>Issues/Bugs:</h2>
+      </div>
+      <div id="known-issues-list">
+        <ul>
+          <li>[✔] Player Position start in the middle</li>
+          <li>[✔] Player movement cannot exceed container width</li>
+          <li>[ ] Slow down Enemy Movement</li>
+          <li>[ ] Kills all enemies -> create more and update wave counter</li>
         </ul>
       </div>
     </div>

@@ -6,16 +6,13 @@ INITIALIZING MAIN VARIABLES
 - player starting position (half of container width)
 ====================*/
 const gameContainer = document.getElementById("game-container");
-// const player = document.getElementById("player");
-const score = document.getElementById("scoreValue");
-score.innerHTML = 0;
+const initialScreen = document.getElementById("initial-screen");
 const totalNumEnemies = 55;
 const enemies = [];
 const bullets = [];
-// const initPlayerPos = player.getBoundingClientRect();
 
 let gameStarted = false;
-// let playerX = initPlayerPos.left;
+let playerX = 0;
 let currScore = 0;
 let gameOverTriggered = false;
 let moveRight = true; //used in moveEnemies() for having grid of enemies to go left and right
@@ -29,6 +26,8 @@ EVENT LISTENER TO CAPTURE KEYBOARD INPUT FOR PLAYER MOVEMENT AND SHOOTING
 document.addEventListener("keydown", function (event) {
   if (!gameStarted && event.key === "Enter") {
     gameStarted = true;
+    initialScreen.remove();
+    createScore();
     createPlayer();
     createEnemyGrid();
     moveEnemies();
@@ -48,18 +47,40 @@ document.addEventListener("keydown", function (event) {
 });
 
 /*====================
-CREATE PLAYER
+CREATE SCORE DISPLAY
+====================*/
 
+function createScore() {
+  const scoreContainer = document.createElement("div");
+  scoreContainer.id = "score-container";
+  gameContainer.appendChild(scoreContainer);
+
+  const scoreLabel = document.createElement("p");
+  scoreLabel.id = "score-label";
+  scoreLabel.innerText = "Score:";
+  scoreContainer.appendChild(scoreLabel);
+
+  const scoreValue = document.createElement("p");
+  scoreValue.id = "score-value";
+  scoreValue.textContent = "0";
+  scoreContainer.appendChild(scoreValue);
+}
+
+/*====================
+CREATE & POSITION PLAYER FUNCTIONS
 ====================*/
 
 function createPlayer() {
-  const player = document.createElement("player");
+  const player = document.createElement("div");
   player.id = "player";
   gameContainer.appendChild(player);
-  const initPlayerPos = player.getBoundingClientRect();
-  let playerX = initPlayerPos.left;
+  positionPlayer(player);
 }
 
+function positionPlayer(player) {
+  const initPlayerPos = player.getBoundingClientRect();
+  playerX = initPlayerPos.left;
+}
 /*====================
 CREATE ENEMY GRID
 - for loop to call createEnemy() depending on the number of total enemies set (totalNumEnemies)
@@ -180,21 +201,10 @@ POSITION BULLET RELATIVE TO PLAYER'S POSITION AND CALLS MOVE BULLET FUNCTION
 
 function positionBullet(bullet) {
   const playerPos = player.getBoundingClientRect();
-  //console.log(`playerPOS.left ${playerPos.left}`);
-  //console.log(`playerPOS.width ${playerPos.width}`);
-  const playerX = playerPos.left + playerPos.width / 2;
-  //console.log(`playerX ${playerX}`);
+  const playerX = playerPos.left + (playerPos.width / 2 - 10); //subtracted another 10px to visually adjust to middle of the player
   const playerY = playerPos.top;
-  //console.log(`playerY ${playerX}`);
-
-  // bullet.style.left = playerX - bullet.offsetWidth / 2 + "px";
-  // bullet.style.top = playerY - bullet.offsetHeight + "px";
-
   bullet.style.left = playerX - 2.5 + "px";
   bullet.style.top = playerY - 20 + "px";
-
-  //console.log(`bullet.style.left ${bullet.style.left}`);
-  //console.log(`bullet.style.top ${bullet.style.top}`);
 
   moveBullet(bullet);
 }
@@ -223,7 +233,6 @@ function moveBullet(bullet) {
 
 /*====================
 CHECK COLLISION
-
 ====================*/
 
 function checkCollision(bullet) {
@@ -256,6 +265,7 @@ SCORE CONTROLLER
 
 function incrementScore() {
   currScore += 10;
+  const score = document.getElementById("score-value");
   score.innerHTML = currScore;
 }
 
@@ -264,7 +274,7 @@ GAME OVER FUNCTION
 ====================*/
 function gameOver() {
   gameOverTriggered = true;
-  //alert("Game Over");
+  alert("Game Over");
 }
 
 // setInterval(moveEnemies, 1000);

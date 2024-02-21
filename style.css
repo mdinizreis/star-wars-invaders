@@ -12,18 +12,77 @@ GAME CONTAINER SETTINGS
   margin: 0 auto;
 }
 
-#scoreLabel {
-  position: relative;
-  width: 50px;
-  height: 5px;
-  color: rgb(183, 183, 63);
+/*====================
+INITIAL / PRE-GAME SCREEN SETTINGS
+====================*/
+#initial-screen {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-#scoreValue {
-  position: relative;
-  width: 50px;
-  height: 5px;
-  color: rgb(183, 183, 63);
+#game-name-label {
+  font-size: 5em;
+  font-family: "Star Wars", sans-serif;
+  color: yellow;
+  text-align: center;
+}
+
+#enter-to-play {
+  font-size: 1.5em;
+  font-family: "Press Start 2P", system-ui;
+  color: yellow;
+  text-align: center;
+  animation: animate 1.5s linear infinite;
+}
+
+/* Blinking animation settings for enter-to-play */
+@keyframes animate {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+#move-instructions {
+  margin-top: 50px;
+  font-size: 0.8em;
+  font-family: "Press Start 2P", system-ui;
+  color: yellow;
+  text-align: center;
+}
+
+#fire-instructions {
+  font-size: 0.8em;
+  font-family: "Press Start 2P", system-ui;
+  color: yellow;
+  text-align: center;
+}
+
+/*====================
+SCORE LABEL AND VALUE SETTINGS
+====================*/
+
+#score-label {
+  position: absolute;
+  top: 0%;
+  left: 90%;
+  transform: translate(-50%, -50%);
+  color: yellow;
+}
+
+#score-value {
+  position: absolute;
+  top: 0%;
+  left: 95%;
+  transform: translate(-50%, -50%);
+  color: yellow;
 }
 /*====================
 PLAYER STYLE SETTINGS
@@ -31,12 +90,14 @@ PLAYER STYLE SETTINGS
 - Resized Millenium Falcon image from https://dribbble.com/shots/14279576-Millennium-Falcon*
 ====================*/
 #player {
-  position: absolute;
+  /* NOT using position: absolute; but sticky; instead so I can limit the player movement within container limits*/
+  position: sticky;
   width: 50px;
   height: 50px;
   background-image: url("assets/player.png");
   bottom: 0;
-  left: 0;
+  left: 602px;
+  top: 800px;
 }
 
 /*====================
