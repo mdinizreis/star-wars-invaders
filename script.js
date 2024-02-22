@@ -2,10 +2,10 @@
 INITIALIZING GLOBALS
 ====================*/
 const gameContainer = document.getElementById("game-container");
-const gameOverAudio = new Audio("assets/audio/gameOver.mp3");
-const shootAudio = new Audio("assets/audio/shoot.wav");
-const startAudio = new Audio("assets/audio/start.mp3");
-const backgroundAudio = new Audio("assets/audio/backgroundMusic.wav");
+const gameOverAudio = new Audio("./assets/audio/gameOver.mp3");
+const shootAudio = new Audio("./assets/audio/shoot.wav");
+const startAudio = new Audio("./assets/audio/start.mp3");
+const backgroundAudio = new Audio("./assets/audio/backgroundMusic.wav");
 const totalNumEnemies = 55;
 const enemies = [];
 const bullets = [];

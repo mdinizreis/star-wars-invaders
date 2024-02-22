@@ -7,7 +7,7 @@ GAME CONTAINER SETTINGS
   position: absolute;
   width: 1200px;
   height: 800px;
-  background-image: url("assets/background.jpg");
+  background-image: url("./assets/background.jpg");
   border: 1px solid black;
   margin: 0 auto;
 }
@@ -96,7 +96,7 @@ PLAYER STYLE SETTINGS
   position: sticky;
   width: 50px;
   height: 50px;
-  background-image: url("assets/player.png");
+  background-image: url("./assets/player.png");
   bottom: 0;
   left: 602px;
   top: 800px;
@@ -110,7 +110,7 @@ ENEMY STYLE SETTINGS
   position: absolute;
   width: 50px;
   height: 50px;
-  background-image: url("assets/enemy.png");
+  background-image: url("./assets/enemy.png");
 }
 
 /*====================
@@ -121,5 +121,5 @@ BULLET STYLE SETTINGS
   position: absolute;
   width: 10px;
   height: 28px;
-  background-image: url("assets/bullet.png");
+  background-image: url("./assets/bullet.png");
 }
