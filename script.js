@@ -1,50 +1,98 @@
 /*====================
-INITIALIZING MAIN VARIABLES
-- enemies[] -> all enemies will be inserted in this array
-- bullets[] -> bullets array
-- gameOverTriggered -> creating this variable so game over alert don't show multiple times for every enemy that reaches the bottom
-- player starting position (half of container width)
+INITIALIZING GLOBALS
 ====================*/
 const gameContainer = document.getElementById("game-container");
-const initialScreen = document.getElementById("initial-screen");
+let initialScreen = "";
+let player = "";
 const totalNumEnemies = 55;
 const enemies = [];
 const bullets = [];
 
-let gameStarted = false;
-let playerX = 0;
-let currScore = 0;
-let gameOverTriggered = false;
-let moveRight = true; //used in moveEnemies() for having grid of enemies to go left and right
+let gameStarted;
+let playerX;
+let currScore; //initial score value
+let gameOverTriggered = false; //used so gameOver() is triggered only once, for the first call
+let moveRight; //used in moveEnemies() for having grid of enemies to go left and right
+let enemyReachedEdge;
 
 /*====================
-EVENT LISTENER TO CAPTURE KEYBOARD INPUT FOR PLAYER MOVEMENT AND SHOOTING
-- eventListener to capture player movement from keyboard and update its position
-- Keyboard Arrows are used to move: update player.style.left
-- Space is used to shoot: Calls shootBullet() to create bullet
+INIT FUNCTION CREATES INITIAL / PRE-GAME SCREEN
 ====================*/
-document.addEventListener("keydown", function (event) {
-  if (!gameStarted && event.key === "Enter") {
-    gameStarted = true;
-    initialScreen.remove();
-    createScore();
-    createPlayer();
-    createEnemyGrid();
-    moveEnemies();
-  }
-  if (event.key === "ArrowLeft" && event.target == document.body) {
-    event.preventDefault(); //prevents arrow left to scroll left on page (its default)
-    playerX -= 30;
-    player.style.left = playerX + "px";
-  } else if (event.key === "ArrowRight" && event.target == document.body) {
-    event.preventDefault(); //prevents arrow right to scroll right on page (its default)
-    playerX += 30;
-    player.style.left = playerX + "px";
-  } else if (event.key === " " && event.target == document.body) {
-    event.preventDefault(); //prevents space bar to scroll down on page (its default)
-    shootBullet();
-  }
-});
+function init() {
+  gameStarted = false;
+  playerX = 0;
+  currScore = 0;
+  gameOverTriggered = false;
+  moveRight = true;
+  enemyReachedEdge = false;
+
+  createInitialScreen();
+  createEventListener();
+}
+
+function createInitialScreen() {
+  initialScreen = document.createElement("div");
+  initialScreen.id = "initial-screen";
+  gameContainer.appendChild(initialScreen);
+
+  const gameNameLabel = document.createElement("h1");
+  gameNameLabel.id = "game-name-label";
+  gameNameLabel.innerText = "star wars invaders";
+  initialScreen.appendChild(gameNameLabel);
+
+  const enterToPlay = document.createElement("p");
+  enterToPlay.id = "enter-to-play";
+  enterToPlay.innerText = "Press enter to play!";
+  initialScreen.appendChild(enterToPlay);
+
+  const moveInstructions = document.createElement("p");
+  moveInstructions.id = "move-instructions";
+  moveInstructions.innerText = "⭅  ⭆ - Move ship left or right";
+  initialScreen.appendChild(moveInstructions);
+
+  const fireInstructions = document.createElement("p");
+  fireInstructions.id = "fire-instructions";
+  fireInstructions.innerText = "SPACE - Fire!";
+  initialScreen.appendChild(fireInstructions);
+}
+
+/*====================
+EVENT LISTENER TO CAPTURE KEYBOARD INPUT FOR STARTING GAME, PLAYER MOVEMENT AND SHOOTING
+====================*/
+function createEventListener() {
+  document.addEventListener("keydown", function (event) {
+    if (!gameStarted && event.key === "Enter") {
+      gameStarted = true;
+      initialScreen.remove();
+      createScore();
+      createPlayer();
+      createEnemyGrid();
+      moveEnemies();
+    }
+    if (event.key === "ArrowLeft" && event.target == document.body) {
+      event.preventDefault(); //prevents arrow left to scroll left on page (its default)
+      if (playerX - 30 < 0) {
+        //avoid playerX getting negative values that would exceed the left limit (0px) of the gameContainer
+        playerX = playerX;
+      } else {
+        playerX -= 30;
+      }
+      player.style.left = playerX + "px";
+    } else if (event.key === "ArrowRight" && event.target == document.body) {
+      event.preventDefault(); //prevents arrow right to scroll right on page (its default)
+      if (playerX + 30 > 1200) {
+        //avoid playerX getting values that would exceed the reight limit (1200px) of the gameContainer
+        playerX = playerX;
+      } else {
+        playerX += 30;
+      }
+      player.style.left = playerX + "px";
+    } else if (event.key === " " && event.target == document.body) {
+      event.preventDefault(); //prevents space bar to scroll down on page (its default)
+      shootBullet();
+    }
+  });
+}
 
 /*====================
 CREATE SCORE DISPLAY
@@ -71,7 +119,7 @@ CREATE & POSITION PLAYER FUNCTIONS
 ====================*/
 
 function createPlayer() {
-  const player = document.createElement("div");
+  player = document.createElement("div");
   player.id = "player";
   gameContainer.appendChild(player);
   positionPlayer(player);
@@ -123,6 +171,8 @@ function positionEnemy(enemy, index) {
   const enemyY = row * 50;
   enemy.style.left = enemyX + "px";
   enemy.style.top = enemyY + "px";
+  // console.log(enemy.style.left);
+  // console.log(enemy.style.top);
 }
 
 /*====================
@@ -137,9 +187,9 @@ MOVE ENEMIES UNTIL REACHES THE END OF PLAYABLE AREA THEN GAME OVER
 - requestAnimationFrame() method tells the browser I want to perform an animation. It requests the browser to call moveEnemies before the next repaint.
 ====================*/
 
-console.log(gameContainer.offsetHeight);
-console.log(gameContainer.offsetWidth);
-let enemyReachedEdge = false;
+console.log("gameContainer Height: " + gameContainer.offsetHeight);
+console.log("gameContainer Width: " + gameContainer.offsetWidth);
+
 function moveEnemies() {
   // let enemyReachedEdge = false;
 
@@ -149,20 +199,28 @@ function moveEnemies() {
 
     if (enemyY > gameContainer.offsetHeight - 50) {
       if (!gameOverTriggered) {
-        gameOverTriggered = true;
+        // gameOverTriggered = true;
         gameOver();
       }
-    } else if (enemyX > gameContainer.offsetWidth - 50 || enemyX < 0) {
-      enemyReachedEdge = true;
     }
+    if (!gameOverTriggered) {
+      if (enemyX > gameContainer.offsetWidth - 50 || enemyX < 0) {
+        enemyReachedEdge = true;
+      }
 
-    if (enemyReachedEdge) {
-      enemy.style.top = enemyY + 1 + "px";
-    } else {
-      if (moveRight) {
-        enemy.style.left = enemyX + 1 + "px";
-      } else {
-        enemy.style.left = enemyX - 1 + "px";
+      if (enemyReachedEdge) {
+        if (enemyY + 1 < 800) {
+          enemy.style.top = enemyY + 1 + "px";
+        }
+      }
+
+      if (!enemyReachedEdge) {
+        if (moveRight) {
+          enemy.style.left = enemyX + 1 + "px";
+        }
+        if (!moveRight) {
+          enemy.style.left = enemyX - 1 + "px";
+        }
       }
     }
   });
@@ -181,11 +239,14 @@ CREATE EACH BULLET, ADD TO BULLETS ARRAY AND CALL POSITION BULLET FUNCTION
 ====================*/
 
 function shootBullet() {
-  const bullet = document.createElement("div");
-  bullet.className = "bullet";
-  gameContainer.appendChild(bullet);
-  bullets.push(bullet);
-  positionBullet(bullet);
+  //if (gameStarted) to avoid creating a bullet on the initial screen, before game starting
+  if (gameStarted) {
+    const bullet = document.createElement("div");
+    bullet.className = "bullet";
+    gameContainer.appendChild(bullet);
+    bullets.push(bullet);
+    positionBullet(bullet);
+  }
 }
 /*====================
 POSITION BULLET RELATIVE TO PLAYER'S POSITION AND CALLS MOVE BULLET FUNCTION
@@ -213,7 +274,7 @@ function positionBullet(bullet) {
 MOVE BULLET
 ====================*/
 function moveBullet(bullet) {
-  if (gameOverTriggered) return;
+  // if (gameOverTriggered) return;
 
   const bulletY = parseInt(bullet.style.top);
 
@@ -223,7 +284,7 @@ function moveBullet(bullet) {
     return;
   }
 
-  bullet.style.top = bulletY - 1 + "px";
+  bullet.style.top = bulletY - 7 + "px";
   checkCollision(bullet);
 
   requestAnimationFrame(function () {
@@ -236,12 +297,13 @@ CHECK COLLISION
 ====================*/
 
 function checkCollision(bullet) {
-  const bulletPos = bullet.getBoundingClientRect();
+  const bulletPos = bullet.getBoundingClientRect(); //get current position of bullet
 
   enemies.forEach(function (enemy) {
-    const enemyPos = enemy.getBoundingClientRect();
+    const enemyPos = enemy.getBoundingClientRect(); //gets position of enemy
 
     if (
+      //matching bullet and enemy position to detect collision
       bulletPos.left < enemyPos.right &&
       bulletPos.right > enemyPos.left &&
       bulletPos.top < enemyPos.bottom &&
@@ -275,6 +337,23 @@ GAME OVER FUNCTION
 function gameOver() {
   gameOverTriggered = true;
   alert("Game Over");
+  console.log("Game Over");
+  reinit();
 }
 
-// setInterval(moveEnemies, 1000);
+/*====================
+INITIALIZATION, DESTROY AND REINITIALIZATION FUNCTIONS
+====================*/
+function destroy() {
+  gameContainer.innerHTML = "";
+  document.removeEventListener("keydown", function (event) {});
+  enemies.splice(0, enemies.length); //empty enemies array
+  bullets.splice(0, bullets.length); //empty bullets array
+}
+
+function reinit() {
+  destroy();
+  init();
+}
+
+init();
