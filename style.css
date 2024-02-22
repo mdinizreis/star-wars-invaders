@@ -75,14 +75,16 @@ SCORE LABEL AND VALUE SETTINGS
   left: 90%;
   transform: translate(-50%, -50%);
   color: yellow;
+  font-family: "Press Start 2P", system-ui;
 }
 
 #score-value {
   position: absolute;
   top: 0%;
-  left: 95%;
+  left: 97%;
   transform: translate(-50%, -50%);
   color: yellow;
+  font-family: "Press Start 2P", system-ui;
 }
 /*====================
 PLAYER STYLE SETTINGS

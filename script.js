@@ -2,21 +2,31 @@
 INITIALIZING GLOBALS
 ====================*/
 const gameContainer = document.getElementById("game-container");
-let initialScreen = "";
-let player = "";
+const gameOverAudio = new Audio("assets/audio/gameOver.mp3");
+const shootAudio = new Audio("assets/audio/shoot.wav");
+const startAudio = new Audio("assets/audio/start.mp3");
+const backgroundAudio = new Audio("assets/audio/backgroundMusic.wav");
 const totalNumEnemies = 55;
 const enemies = [];
 const bullets = [];
 
+let initialScreen = "";
+let player = "";
 let gameStarted;
 let playerX;
 let currScore; //initial score value
 let gameOverTriggered = false; //used so gameOver() is triggered only once, for the first call
 let moveRight; //used in moveEnemies() for having grid of enemies to go left and right
+let moveDown;
+let moveLeft;
+let moveDownAgain;
 let enemyReachedEdge;
 
 /*====================
-INIT FUNCTION CREATES INITIAL / PRE-GAME SCREEN
+INIT FUNCTION:
+SET GLOBALS VALUES
+CALL INITIAL / PRE-GAME SCREEN CREATION
+CALL EVENTLISTENER CREATION
 ====================*/
 function init() {
   gameStarted = false;
@@ -24,13 +34,20 @@ function init() {
   currScore = 0;
   gameOverTriggered = false;
   moveRight = true;
+  moveDown = false;
+  moveLeft = false;
+  moveDownAgain = false;
   enemyReachedEdge = false;
 
   createInitialScreen();
   createEventListener();
 }
 
+/*====================
+CREATE INITIAL / PRE-GAME SCREEN AND ADD TO DOM
+====================*/
 function createInitialScreen() {
+  // backgroundAudio.play(); //Browser policy does not allow auto-play without user interaction first https://goo.gl/xX8pDD
   initialScreen = document.createElement("div");
   initialScreen.id = "initial-screen";
   gameContainer.appendChild(initialScreen);
@@ -64,6 +81,8 @@ function createEventListener() {
     if (!gameStarted && event.key === "Enter") {
       gameStarted = true;
       initialScreen.remove();
+      backgroundAudio.play();
+      startAudio.play();
       createScore();
       createPlayer();
       createEnemyGrid();
@@ -89,13 +108,14 @@ function createEventListener() {
       player.style.left = playerX + "px";
     } else if (event.key === " " && event.target == document.body) {
       event.preventDefault(); //prevents space bar to scroll down on page (its default)
+      shootAudio.play();
       shootBullet();
     }
   });
 }
 
 /*====================
-CREATE SCORE DISPLAY
+CREATE SCORE TOP RIGHT DISPLAY
 ====================*/
 
 function createScore() {
@@ -129,6 +149,7 @@ function positionPlayer(player) {
   const initPlayerPos = player.getBoundingClientRect();
   playerX = initPlayerPos.left;
 }
+
 /*====================
 CREATE ENEMY GRID
 - for loop to call createEnemy() depending on the number of total enemies set (totalNumEnemies)
@@ -171,8 +192,6 @@ function positionEnemy(enemy, index) {
   const enemyY = row * 50;
   enemy.style.left = enemyX + "px";
   enemy.style.top = enemyY + "px";
-  // console.log(enemy.style.left);
-  // console.log(enemy.style.top);
 }
 
 /*====================
@@ -187,46 +206,89 @@ MOVE ENEMIES UNTIL REACHES THE END OF PLAYABLE AREA THEN GAME OVER
 - requestAnimationFrame() method tells the browser I want to perform an animation. It requests the browser to call moveEnemies before the next repaint.
 ====================*/
 
-console.log("gameContainer Height: " + gameContainer.offsetHeight);
-console.log("gameContainer Width: " + gameContainer.offsetWidth);
-
 function moveEnemies() {
-  // let enemyReachedEdge = false;
+  let enemyReachedEdge = false; //to control when we reach the left/right edge of gameCountainer
+  let enemyReachedBottom = false; //to control when we reach the bottom edge of gameCountainer
+
+  //keep track of the leftmost (first) and rightmost(last) x-coordinate of the enemies.
+  let firstEnemyX = Infinity; //ensures that any subsequent x-coordinate value of an enemy will be SMALLER than firstEnemyX.
+  let lastEnemyX = -Infinity; //ensures that any subsequent x-coordinate value of an enemy will be GREATER than firstEnemyX.
 
   enemies.forEach(function (enemy) {
     const enemyX = parseInt(enemy.style.left);
-    const enemyY = parseInt(enemy.style.top);
+    const enemyY = parseInt(enemy.style.top); //retrieves the value of the top CSS property of the enemy element and converts it to an integer using the parseInt function. 100px will become just 100
 
-    if (enemyY > gameContainer.offsetHeight - 50) {
-      if (!gameOverTriggered) {
-        // gameOverTriggered = true;
-        gameOver();
-      }
+    //check if enemyX is the rightmost / lastEnemyX, if its not updates lastEnemyX
+    if (enemyX > lastEnemyX) {
+      lastEnemyX = enemyX;
     }
-    if (!gameOverTriggered) {
-      if (enemyX > gameContainer.offsetWidth - 50 || enemyX < 0) {
-        enemyReachedEdge = true;
-      }
+    //check if enemyX is the leftmost / firstEnemyX, if its not updates firstEnemyX
+    if (enemyX < firstEnemyX) {
+      firstEnemyX = enemyX;
+    }
 
-      if (enemyReachedEdge) {
-        if (enemyY + 1 < 800) {
-          enemy.style.top = enemyY + 1 + "px";
-        }
-      }
+    const enemyWidth = enemy.offsetWidth; //get the width of enemy (50px atm)
 
-      if (!enemyReachedEdge) {
-        if (moveRight) {
-          enemy.style.left = enemyX + 1 + "px";
-        }
-        if (!moveRight) {
-          enemy.style.left = enemyX - 1 + "px";
-        }
-      }
+    //Checks if the current enemy has reached the right edge of the game container AND if the movement direction is set to move right (moveRight)
+    if (enemyX >= gameContainer.offsetWidth - enemyWidth && moveRight) {
+      enemyReachedEdge = true; //reached the right edge so update variable
+    }
+
+    //Checks if the current enemy has reached the left edge of the game container AND if the movement direction is set to move left (!moveRight)
+    if (enemyX <= 0 && !moveRight) {
+      enemyReachedEdge = true; //reached the left edge so update variable
+    }
+    //Checks if the current enemy has reached the bottom edge of the game container
+    if (enemyY > gameContainer.offsetHeight - enemy.offsetHeight) {
+      enemyReachedBottom = true; //reached the bottom edge so update variable
     }
   });
 
+  //if reached the bottom edge calls GameOver()
+  if (enemyReachedBottom) {
+    gameOver();
+    return;
+  }
+
+  //if reached left/right edge updates moveDown to true (so it goes dwn in the next if) and invert movement direction left <> right to go after moving down
   if (enemyReachedEdge) {
+    moveDown = true;
     moveRight = !moveRight;
+    moveLeft = !moveLeft;
+  }
+  //RIGHT EDGE MOVE DOWN - if moveDown is true goes through the array of enemies moving all of them down
+  if (moveDown) {
+    enemies.forEach(function (enemy) {
+      const enemyY = parseInt(enemy.style.top);
+      enemy.style.top = enemyY + 20 + "px";
+    });
+    //moveDown and moveDownAgain used to control going down at each edge. Will be opposites to each other
+    moveDown = false;
+    moveDownAgain = true;
+
+    //MOVE LEFT - if moveLeft is true goes through the array of enemies moving all of them left
+  } else if (moveLeft) {
+    enemies.forEach(function (enemy) {
+      const enemyX = parseInt(enemy.style.left);
+      enemy.style.left = enemyX - 4 + "px"; //change speed of movement LEFT / RIGHT on how many px added
+    });
+
+    //MOVE RIGHT - if moveRight is true goes through the array of enemies moving all of them right
+  } else if (moveRight) {
+    enemies.forEach(function (enemy) {
+      const enemyX = parseInt(enemy.style.left);
+      enemy.style.left = enemyX + 4 + "px"; //change speed of movement LEFT / RIGHT on how many px added
+    });
+
+    //LEFT EDGE MOVE DOWN -> if moveDownAgain is true goes through the array of enemies moving all of them down
+  } else if (moveDownAgain) {
+    enemies.forEach(function (enemy) {
+      const enemyY = parseInt(enemy.style.top);
+      enemy.style.top = enemyY + 20 + "px";
+    });
+    //moveDown and moveDownAgain used to control going down at each edge. Will be opposites to each other
+    moveDownAgain = false;
+    moveRight = true;
   }
 
   requestAnimationFrame(moveEnemies);
@@ -250,21 +312,19 @@ function shootBullet() {
 }
 /*====================
 POSITION BULLET RELATIVE TO PLAYER'S POSITION AND CALLS MOVE BULLET FUNCTION
-- positionBullet() -> receive bullet from shootBullet and positions the bullet element
-- playerPos -> getBoundingClientRect() retrieves the current position and size of the player element on the screen
-    -  playerPos object contains properties like top, bottom, left, right, width, and height got by getBoundingClientRect()
 - playerX -> Calculates the position for the bullet on the X axis | horizontal
-    - Takes the left position of the player (playerPos.left) and adds half of the player's width (playerPos.width / 2) to position bullet horizontally at the center of the player element
-- playerY -> Calculates the position for the bullet on the Y axis | vertical.
-    - Takes the top position of the player (playerPos.top)
-- Update bullet CSS left and top properties
+  - Takes the left position of the player (playerPos.left) and adds half of the player's width (playerPos.width / 2) to position bullet horizontally at the center of the player element
+- playerY -> Calculates the position for the bullet on the Y axis | vertical. 
+  - Takes the top position of the player (playerPos.top)
+
 ====================*/
 
 function positionBullet(bullet) {
   const playerPos = player.getBoundingClientRect();
+  //getBoundingClientRect() retrieves the current position and size of the player element on the screen
   const playerX = playerPos.left + (playerPos.width / 2 - 10); //subtracted another 10px to visually adjust to middle of the player
   const playerY = playerPos.top;
-  bullet.style.left = playerX - 2.5 + "px";
+  bullet.style.left = playerX - 2.5 + "px"; //Update bullet CSS left and top properties
   bullet.style.top = playerY - 20 + "px";
 
   moveBullet(bullet);
@@ -336,6 +396,7 @@ GAME OVER FUNCTION
 ====================*/
 function gameOver() {
   gameOverTriggered = true;
+  gameOverAudio.play();
   alert("Game Over");
   console.log("Game Over");
   reinit();
@@ -345,8 +406,8 @@ function gameOver() {
 INITIALIZATION, DESTROY AND REINITIALIZATION FUNCTIONS
 ====================*/
 function destroy() {
-  gameContainer.innerHTML = "";
-  document.removeEventListener("keydown", function (event) {});
+  gameContainer.innerHTML = ""; //clean gameContainer removing all HTML within it
+  document.removeEventListener("keydown", function (event) {}); //remove eventListener
   enemies.splice(0, enemies.length); //empty enemies array
   bullets.splice(0, bullets.length); //empty bullets array
 }
