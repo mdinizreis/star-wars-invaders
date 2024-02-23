@@ -19,7 +19,7 @@ INITIAL / PRE-GAME SCREEN SETTINGS
   position: absolute;
   top: 30%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -30%);
 }
 
 #game-name-label {
@@ -30,7 +30,7 @@ INITIAL / PRE-GAME SCREEN SETTINGS
 }
 
 #enter-to-play {
-  font-size: 1.5em;
+  font-size: 1.8em;
   font-family: "Press Start 2P", system-ui;
   color: yellow;
   text-align: center;
@@ -52,17 +52,30 @@ INITIAL / PRE-GAME SCREEN SETTINGS
 
 #move-instructions {
   margin-top: 50px;
-  font-size: 0.8em;
+  font-size: 1em;
   font-family: "Press Start 2P", system-ui;
   color: yellow;
   text-align: center;
 }
 
 #fire-instructions {
-  font-size: 0.8em;
+  font-size: 1em;
   font-family: "Press Start 2P", system-ui;
   color: yellow;
   text-align: center;
+}
+
+#initial-screen-high-score-table {
+  margin-top: 70px;
+  font-size: 1em;
+  font-family: "Press Start 2P", system-ui;
+  color: yellow;
+  text-align: center;
+  border: 1px;
+  border-color: yellow;
+  border-style: dashed;
+  border-width: 0.1em;
+  width: 100%;
 }
 
 /*====================
@@ -72,7 +85,7 @@ SCORE LABEL AND VALUE SETTINGS
 #score-label {
   position: absolute;
   top: 0%;
-  left: 90%;
+  left: 88%;
   transform: translate(-50%, -50%);
   color: yellow;
   font-family: "Press Start 2P", system-ui;
@@ -81,7 +94,25 @@ SCORE LABEL AND VALUE SETTINGS
 #score-value {
   position: absolute;
   top: 0%;
-  left: 97%;
+  left: 96%;
+  transform: translate(-50%, -50%);
+  color: yellow;
+  font-family: "Press Start 2P", system-ui;
+}
+
+#wave-label {
+  position: absolute;
+  top: 0%;
+  left: 75%;
+  transform: translate(-50%, -50%);
+  color: yellow;
+  font-family: "Press Start 2P", system-ui;
+}
+
+#wave-value {
+  position: absolute;
+  top: 0%;
+  left: 81%;
   transform: translate(-50%, -50%);
   color: yellow;
   font-family: "Press Start 2P", system-ui;
@@ -96,7 +127,7 @@ PLAYER STYLE SETTINGS
   position: sticky;
   width: 50px;
   height: 50px;
-  background-image: url("./assets/player.png");
+  background-image: url("./assets/player2.png");
   bottom: 0;
   left: 602px;
   top: 800px;

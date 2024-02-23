@@ -10,16 +10,19 @@ const totalNumEnemies = 55;
 const enemies = [];
 const bullets = [];
 
+let highScores = [];
 let initialScreen = "";
 let player = "";
 let gameStarted;
 let playerX;
 let currScore;
-let moveRight; //used in moveEnemies() for having grid of enemies to go left and right
+let waveCounter;
+let moveRight;
 let moveLeft;
 let moveDown;
 let moveDownAgain;
 let enemyReachedEdge;
+let canShoot;
 
 /*====================
 INIT FUNCTION:
@@ -31,11 +34,13 @@ function init() {
   gameStarted = false;
   playerX = 0;
   currScore = 0; //initial score value
+  waveCounter = 0;
   moveRight = true; //variables used by moveEnemies() for moving grid of enemies. Right = true as that is the first direction
   moveLeft = false;
   moveDown = false;
   moveDownAgain = false;
   enemyReachedEdge = false;
+  canShoot = true;
 
   createInitialScreen();
   createEventListener();
@@ -69,6 +74,67 @@ function createInitialScreen() {
   fireInstructions.id = "fire-instructions";
   fireInstructions.innerText = "SPACE - Fire!";
   initialScreen.appendChild(fireInstructions);
+
+  displayHighScores();
+}
+
+/*====================
+CREATE HIGH SCORE TABLE ON INITIAL SCREEN
+====================*/
+function displayHighScores() {
+  const highScores = getHighScores();
+
+  // Display the high scores in a table
+  const table = document.createElement("table");
+  table.id = "initial-screen-high-score-table";
+  const tableBody = document.createElement("tbody");
+
+  //create table headers
+  const rowHeader = document.createElement("tr");
+
+  const rankCellHeader = document.createElement("th");
+  rankCellHeader.textContent = "#";
+  rowHeader.appendChild(rankCellHeader);
+
+  const nameCellHeader = document.createElement("th");
+  nameCellHeader.textContent = "Name";
+  rowHeader.appendChild(nameCellHeader);
+
+  const wavesCellHeader = document.createElement("th");
+  wavesCellHeader.textContent = "Waves";
+  rowHeader.appendChild(wavesCellHeader);
+
+  const scoreCellHeader = document.createElement("th");
+  scoreCellHeader.textContent = "Score";
+  rowHeader.appendChild(scoreCellHeader);
+
+  tableBody.appendChild(rowHeader);
+
+  // Create table rows for each high score
+  highScores.forEach((highScore, index) => {
+    const row = document.createElement("tr");
+
+    const rankCell = document.createElement("td");
+    rankCell.textContent = index + 1;
+    row.appendChild(rankCell);
+
+    const nameCell = document.createElement("td");
+    nameCell.textContent = highScore.playerName;
+    row.appendChild(nameCell);
+
+    const wavesCell = document.createElement("td");
+    wavesCell.textContent = highScore.waves;
+    row.appendChild(wavesCell);
+
+    const scoreCell = document.createElement("td");
+    scoreCell.textContent = highScore.score;
+    row.appendChild(scoreCell);
+
+    tableBody.appendChild(row);
+  });
+
+  table.appendChild(tableBody);
+  initialScreen.appendChild(table);
 }
 
 /*====================
@@ -106,14 +172,13 @@ function createEventListener() {
       player.style.left = playerX + "px";
     } else if (event.key === " " && event.target == document.body) {
       event.preventDefault(); //prevents space bar to scroll down on page (its default)
-      shootAudio.play();
       shootBullet();
     }
   });
 }
 
 /*====================
-CREATE SCORE TOP RIGHT DISPLAY
+CREATE SCORE TOP RIGHT DISPLAY ON THE DOM - AFTER GAME START
 ====================*/
 
 function createScore() {
@@ -128,12 +193,22 @@ function createScore() {
 
   const scoreValue = document.createElement("p");
   scoreValue.id = "score-value";
-  scoreValue.textContent = "0";
+  scoreValue.textContent = currScore;
   scoreContainer.appendChild(scoreValue);
+
+  const waveLabel = document.createElement("p");
+  waveLabel.id = "wave-label";
+  waveLabel.innerText = "Wave:";
+  scoreContainer.appendChild(waveLabel);
+
+  const waveValue = document.createElement("p");
+  waveValue.id = "wave-value";
+  waveValue.textContent = waveCounter;
+  scoreContainer.appendChild(waveValue);
 }
 
 /*====================
-CREATE & POSITION PLAYER FUNCTIONS
+CREATE & POSITION PLAYER
 ====================*/
 
 function createPlayer() {
@@ -285,13 +360,21 @@ CREATE EACH BULLET, ADD TO BULLETS ARRAY AND CALL POSITION BULLET FUNCTION
 ====================*/
 
 function shootBullet() {
-  if (gameStarted) {
-    //if statement to avoid creating a bullet on the initial screen, before game starting
+  if (gameStarted && canShoot) {
+    //check the value of CanShoot before creating new bullet. If false exit function early
+    //chack if game started to avoid creating a bullet on the initial screen, before game stars
+    shootAudio.play();
     const bullet = document.createElement("div");
     bullet.className = "bullet";
     gameContainer.appendChild(bullet);
     bullets.push(bullet);
     positionBullet(bullet);
+
+    //otherwise set canShoot to false and start a timer to reset canShoot to true after 0.5 seconds (to limit the rate of fire to 2 missiles per second).
+    canShoot = false;
+    setTimeout(function () {
+      canShoot = true;
+    }, 500);
   }
 }
 /*====================
@@ -351,11 +434,17 @@ function checkCollision(bullet) {
       bulletPos.bottom > enemyPos.top
     ) {
       // Collision detected
-      bullet.remove();
+      bullet.remove(); //remove bullet from the DOM
       bullets.splice(bullets.indexOf(bullet), 1);
-      enemy.remove();
+
+      enemy.remove(); //remove enemy from the DOM
       enemies.splice(enemies.indexOf(enemy), 1);
       incrementScore();
+
+      if (enemies.length === 0) {
+        createEnemyGrid();
+        incrementWave();
+      }
     }
   });
 }
@@ -372,13 +461,57 @@ function incrementScore() {
   score.innerHTML = currScore;
 }
 
+function incrementWave() {
+  waveCounter += 1;
+  const wave = document.getElementById("wave-value");
+  wave.innerHTML = waveCounter;
+}
+
+/*====================
+SAVE HIGH SCORES
+- Get high score array from local storage, add score to array, sort (descending), remove scores beyond top 5, update local storage
+====================*/
+function saveHighScore(playerName, waves, score) {
+  // Get existing high scores from localStorage or initialize an empty array
+  highScores = JSON.parse(localStorage.getItem("highScores"));
+
+  // Create a new high score object
+  const newHighScore = { playerName, waves, score };
+
+  // Add the new high score to the array
+  highScores.push(newHighScore);
+
+  // Sort the high scores array in descending order based on the score (wave follows score)
+  highScores.sort((a, b) => b.score - a.score);
+
+  // Remove any extra scores beyond the top 10
+  if (highScores.length > 10) {
+    highScores.splice(10);
+  }
+
+  // Store the updated high scores array in localStorage
+  localStorage.setItem("highScores", JSON.stringify(highScores));
+}
+
+/*====================
+GET HIGH SCORES FROM BROWSER LOCAL STORAGE
+====================*/
+
+function getHighScores() {
+  // Get high scores from localStorage or return an empty array if there are no high scores
+  return JSON.parse(localStorage.getItem("highScores")) || [];
+}
+
 /*====================
 GAME OVER FUNCTION
 ====================*/
 function gameOver() {
   gameOverAudio.play();
-  alert("Game Over");
-  console.log("Game Over");
+  // alert("Game Over");
+  const playerName = "Marcos";
+  const waves = waveCounter;
+  const score = currScore;
+  saveHighScore(playerName, waves, score);
   reinit();
 }
 
