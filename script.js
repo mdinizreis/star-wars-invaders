@@ -14,11 +14,10 @@ let initialScreen = "";
 let player = "";
 let gameStarted;
 let playerX;
-let currScore; //initial score value
-let gameOverTriggered = false; //used so gameOver() is triggered only once, for the first call
+let currScore;
 let moveRight; //used in moveEnemies() for having grid of enemies to go left and right
-let moveDown;
 let moveLeft;
+let moveDown;
 let moveDownAgain;
 let enemyReachedEdge;
 
@@ -31,11 +30,10 @@ CALL EVENTLISTENER CREATION
 function init() {
   gameStarted = false;
   playerX = 0;
-  currScore = 0;
-  gameOverTriggered = false;
-  moveRight = true;
-  moveDown = false;
+  currScore = 0; //initial score value
+  moveRight = true; //variables used by moveEnemies() for moving grid of enemies. Right = true as that is the first direction
   moveLeft = false;
+  moveDown = false;
   moveDownAgain = false;
   enemyReachedEdge = false;
 
@@ -177,38 +175,24 @@ function createEnemy() {
 /*====================
 POSITION EACH ENEMY FROM THE ENEMIES ARRAY IN A GRID AND UPDATES CSS
 Note: each row will have 11 enemies as traditional Space Invaders game
-- row -> get number of rows by dividing total number of enemies (index) in the array at the iteration time by 11
-- column -> get number of columns by getting the remainder of (total number of enemies (index) in the array at the iteration time divided by 11). Ensures maximum of 11 columns
-- enemyX -> enemyx is the enemy position on X axis | Adjust the spacing between enemies here (50px right now)
-- enemyY -> enemyY is the enemy position on Y axis | Adjust the spacing between rows here
-- enemy.style.left -> update CSS property - horizontal pos
-- enemy.style.top -> update CSS property - vertical pos
 ====================*/
 
 function positionEnemy(enemy, index) {
-  const row = Math.floor(index / 11);
-  const column = index % 11;
-  const enemyX = column * 50;
-  const enemyY = row * 50;
-  enemy.style.left = enemyX + "px";
-  enemy.style.top = enemyY + "px";
+  const row = Math.floor(index / 11); //get number of rows by dividing total number of enemies (index) in the array at the iteration time by 11
+  const column = index % 11; //get number of columns by getting the remainder of (total number of enemies (index) in the array at the iteration time divided by 11). Ensures maximum of 11 columns
+  const enemyX = column * 50; //enemyx is the enemy position on X axis | Adjust the spacing between enemies here (50px right now)
+  const enemyY = row * 50; //enemyY is the enemy position on Y axis | Adjust the spacing between rows here
+  enemy.style.left = enemyX + "px"; //update CSS property - horizontal pos
+  enemy.style.top = enemyY + "px"; //update CSS property - vertical pos
 }
 
 /*====================
 MOVE ENEMIES UNTIL REACHES THE END OF PLAYABLE AREA THEN GAME OVER
-- For each enemy in the enemies[] array
-- enemyY -> retrieves the value of the top CSS property of the enemy element and converts it to an integer using the parseInt function. 100px will become just 100
-- if enemyY position checks if the current vertical position of enemyY is greater than the height of the game container (gameContainer.offsetHeight)
-    - The subtraction of 50 is to account for the height of the enemy element itself.
-    - if gameOver function have not been called yet (!gameOverTriggered) set gameOverTriggered to true and call gameOver()
-        - Necessary so the gameOver() funtion don't run again for every single enemy that reaches the bottom
-- else update enemy vertical position by 1px in CSS
-- requestAnimationFrame() method tells the browser I want to perform an animation. It requests the browser to call moveEnemies before the next repaint.
 ====================*/
 
 function moveEnemies() {
-  let enemyReachedEdge = false; //to control when we reach the left/right edge of gameCountainer
-  let enemyReachedBottom = false; //to control when we reach the bottom edge of gameCountainer
+  enemyReachedEdge = false; //to control when we reach the left/right edge of gameCountainer
+  enemyReachedBottom = false; //to control when we reach the bottom edge of gameCountainer
 
   //keep track of the leftmost (first) and rightmost(last) x-coordinate of the enemies.
   let firstEnemyX = Infinity; //ensures that any subsequent x-coordinate value of an enemy will be SMALLER than firstEnemyX.
@@ -301,8 +285,8 @@ CREATE EACH BULLET, ADD TO BULLETS ARRAY AND CALL POSITION BULLET FUNCTION
 ====================*/
 
 function shootBullet() {
-  //if (gameStarted) to avoid creating a bullet on the initial screen, before game starting
   if (gameStarted) {
+    //if statement to avoid creating a bullet on the initial screen, before game starting
     const bullet = document.createElement("div");
     bullet.className = "bullet";
     gameContainer.appendChild(bullet);
@@ -320,8 +304,7 @@ POSITION BULLET RELATIVE TO PLAYER'S POSITION AND CALLS MOVE BULLET FUNCTION
 ====================*/
 
 function positionBullet(bullet) {
-  const playerPos = player.getBoundingClientRect();
-  //getBoundingClientRect() retrieves the current position and size of the player element on the screen
+  const playerPos = player.getBoundingClientRect(); //getBounding funtion retrieves the current position and size of the player element on the screen
   const playerX = playerPos.left + (playerPos.width / 2 - 10); //subtracted another 10px to visually adjust to middle of the player
   const playerY = playerPos.top;
   bullet.style.left = playerX - 2.5 + "px"; //Update bullet CSS left and top properties
@@ -334,8 +317,6 @@ function positionBullet(bullet) {
 MOVE BULLET
 ====================*/
 function moveBullet(bullet) {
-  // if (gameOverTriggered) return;
-
   const bulletY = parseInt(bullet.style.top);
 
   if (bulletY < 0) {
@@ -395,7 +376,6 @@ function incrementScore() {
 GAME OVER FUNCTION
 ====================*/
 function gameOver() {
-  gameOverTriggered = true;
   gameOverAudio.play();
   alert("Game Over");
   console.log("Game Over");
