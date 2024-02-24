@@ -6,8 +6,9 @@ First project: Star Wars themed Space Invaders browser game built with Vanilla J
 
 Space Invaders is a Japanese shooting video game released in 1978 by Taito. It was developed by Tomohiro Nishikado, who was inspired by other media: Breakout, The War of the Worlds, and Star Wars. This game, in turn, was built with a Star Wars theme, paying homage to the original classic.
 
-![Game Initial screen with play intructions and call to press enter to start](assets/screenshot1.png)
-![actual gameplay image with player ship at the bottom firing at a grid of emeny ships at the top](assets/screenshot2.png)
+![Game Initial screen with play intructions and call to press enter to start](assets/img/screenshot1.png)
+![actual gameplay image with player ship at the bottom firing at a grid of emeny ships at the top](assets/img/screenshot2.png)
+
 500x333
 
 ## Technologies Used

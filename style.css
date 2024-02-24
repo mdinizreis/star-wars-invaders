@@ -7,7 +7,7 @@ GAME CONTAINER SETTINGS
   position: absolute;
   width: 1200px;
   height: 800px;
-  background-image: url("./assets/background.jpg");
+  background-image: url("./assets/img/background.jpg");
   border: 1px solid black;
   margin: 0 auto;
 }
@@ -32,7 +32,7 @@ INITIAL / PRE-GAME SCREEN SETTINGS
 #enter-to-play {
   font-size: 1.8em;
   font-family: "Press Start 2P", system-ui;
-  color: yellow;
+  color: rgb(239, 248, 253);
   text-align: center;
   animation: animate 1.5s linear infinite;
 }
@@ -49,9 +49,24 @@ INITIAL / PRE-GAME SCREEN SETTINGS
     opacity: 0;
   }
 }
+#choose-player-type {
+  margin-top: 50px;
+  font-size: 1em;
+  font-family: "Press Start 2P", system-ui;
+  color: rgb(47, 249, 36);
+  text-align: center;
+}
+
+#instructions-label {
+  margin-top: 50px;
+  font-size: 1em;
+  font-family: "Press Start 2P", system-ui;
+  color: yellow;
+  text-align: center;
+}
 
 #move-instructions {
-  margin-top: 50px;
+  margin-top: 20px;
   font-size: 1em;
   font-family: "Press Start 2P", system-ui;
   color: yellow;
@@ -66,7 +81,8 @@ INITIAL / PRE-GAME SCREEN SETTINGS
 }
 
 #initial-screen-high-score-table {
-  margin-top: 70px;
+  margin-top: 30px;
+  opacity: 80%;
   font-size: 1em;
   font-family: "Press Start 2P", system-ui;
   color: yellow;
@@ -122,12 +138,22 @@ PLAYER STYLE SETTINGS
 - Size: 50 X 50px (width x height)
 - Resized Millenium Falcon image from https://dribbble.com/shots/14279576-Millennium-Falcon*
 ====================*/
-#player {
+#player-MF {
   /* NOT using position: absolute; but sticky; instead so I can limit the player movement within container limits*/
   position: sticky;
   width: 50px;
   height: 50px;
-  background-image: url("./assets/player2.png");
+  background-image: url("./assets/img/player1.png");
+  bottom: 0;
+  left: 602px;
+  top: 800px;
+}
+
+#player-XW {
+  position: sticky;
+  width: 50px;
+  height: 50px;
+  background-image: url("./assets/img/player2.png");
   bottom: 0;
   left: 602px;
   top: 800px;
@@ -137,11 +163,18 @@ PLAYER STYLE SETTINGS
 ENEMY STYLE SETTINGS
 - Size: 50 X 50px (width x height)
 ====================*/
-.enemy {
+.enemy-1 {
   position: absolute;
   width: 50px;
   height: 50px;
-  background-image: url("./assets/enemy.png");
+  background-image: url("./assets/img/enemy1.png");
+}
+
+.enemy-2 {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-image: url("./assets/img/enemy2.png");
 }
 
 /*====================
@@ -152,5 +185,5 @@ BULLET STYLE SETTINGS
   position: absolute;
   width: 10px;
   height: 28px;
-  background-image: url("./assets/bullet.png");
+  background-image: url("./assets/img/bullet.png");
 }

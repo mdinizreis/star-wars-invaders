@@ -14,9 +14,16 @@ let highScores = [];
 let initialScreen = "";
 let player = "";
 let gameStarted;
+let choosePlayerType;
+let selectedPlayer;
 let playerX;
+let playerMoveSpeed;
 let currScore;
+let bulletMoveSpeed;
 let waveCounter;
+let enemySwitcher;
+let enemyYMoveSpeed;
+let enemyXMoveSpeed;
 let moveRight;
 let moveLeft;
 let moveDown;
@@ -32,9 +39,18 @@ CALL EVENTLISTENER CREATION
 ====================*/
 function init() {
   gameStarted = false;
+  gameOverAudio.volume = 0.5; //play audio at 50% of the volume as not to blast the user in case their volume is already set high
+  shootAudio.volume = 0.5;
+  startAudio.volume = 0.5;
+  backgroundAudio.volume = 1; //background audio at 100% as it is already low
+  selectedPlayer = "MF"; //standard player is set to Millenium Falcon
   playerX = 0;
+  playerMoveSpeed = 40; //player move at this px speed at each keystroke (left/right)
   currScore = 0; //initial score value
+  bulletMoveSpeed = 7; //speed in px that bullet moves up in the Y axis
   waveCounter = 0;
+  enemyYMoveSpeed = 20; //speed enemies move vertically
+  enemyXMoveSpeed = 4; //speed enemies move horizontally 4
   moveRight = true; //variables used by moveEnemies() for moving grid of enemies. Right = true as that is the first direction
   moveLeft = false;
   moveDown = false;
@@ -65,14 +81,24 @@ function createInitialScreen() {
   enterToPlay.innerText = "Press enter to play!";
   initialScreen.appendChild(enterToPlay);
 
+  choosePlayerType = document.createElement("p");
+  choosePlayerType.id = "choose-player-type";
+  choosePlayerType.innerText = "< Choose Player >";
+  initialScreen.appendChild(choosePlayerType);
+
+  const instructionsLabel = document.createElement("p");
+  instructionsLabel.id = "instructions-label";
+  instructionsLabel.innerText = "How to play:";
+  initialScreen.appendChild(instructionsLabel);
+
   const moveInstructions = document.createElement("p");
   moveInstructions.id = "move-instructions";
-  moveInstructions.innerText = "⭅  ⭆ - Move ship left or right";
+  moveInstructions.innerText = "⭅ ⭆ Move ship";
   initialScreen.appendChild(moveInstructions);
 
   const fireInstructions = document.createElement("p");
   fireInstructions.id = "fire-instructions";
-  fireInstructions.innerText = "SPACE - Fire!";
+  fireInstructions.innerText = "SPACEBAR Fire!";
   initialScreen.appendChild(fireInstructions);
 
   displayHighScores();
@@ -142,37 +168,49 @@ EVENT LISTENER TO CAPTURE KEYBOARD INPUT FOR STARTING GAME, PLAYER MOVEMENT AND 
 ====================*/
 function createEventListener() {
   document.addEventListener("keydown", function (event) {
+    if (!gameStarted) {
+      if (event.key === "ArrowLeft" && event.target == document.body) {
+        choosePlayerType.innerText = "< Millenium Falcon >";
+        selectedPlayer = "MF";
+      }
+      if (event.key === "ArrowRight" && event.target == document.body) {
+        choosePlayerType.innerText = "< X-Wing >";
+        selectedPlayer = "XW";
+      }
+    }
     if (!gameStarted && event.key === "Enter") {
       gameStarted = true;
       initialScreen.remove();
       backgroundAudio.play();
       startAudio.play();
       createScore();
-      createPlayer();
+      createPlayer(selectedPlayer); // pass selected player MF Millenium Falcon or XW X-Wing
       createEnemyGrid();
       moveEnemies();
     }
-    if (event.key === "ArrowLeft" && event.target == document.body) {
-      event.preventDefault(); //prevents arrow left to scroll left on page (its default)
-      if (playerX - 30 < 0) {
-        //avoid playerX getting negative values that would exceed the left limit (0px) of the gameContainer
-        playerX = playerX;
-      } else {
-        playerX -= 30;
+    if (gameStarted) {
+      if (event.key === "ArrowLeft" && event.target == document.body) {
+        event.preventDefault(); //prevents arrow left to scroll left on page (its default)
+        if (playerX - playerMoveSpeed < 0) {
+          //avoid playerX getting negative values that would exceed the left limit (0px) of the gameContainer
+          playerX = playerX;
+        } else {
+          playerX -= playerMoveSpeed;
+        }
+        player.style.left = playerX + "px";
+      } else if (event.key === "ArrowRight" && event.target == document.body) {
+        event.preventDefault(); //prevents arrow right to scroll right on page (its default)
+        if (playerX + playerMoveSpeed > 1200) {
+          //avoid playerX getting values that would exceed the reight limit (1200px) of the gameContainer
+          playerX = playerX;
+        } else {
+          playerX += playerMoveSpeed;
+        }
+        player.style.left = playerX + "px";
+      } else if (event.key === " " && event.target == document.body) {
+        event.preventDefault(); //prevents space bar to scroll down on page (its default)
+        shootBullet();
       }
-      player.style.left = playerX + "px";
-    } else if (event.key === "ArrowRight" && event.target == document.body) {
-      event.preventDefault(); //prevents arrow right to scroll right on page (its default)
-      if (playerX + 30 > 1200) {
-        //avoid playerX getting values that would exceed the reight limit (1200px) of the gameContainer
-        playerX = playerX;
-      } else {
-        playerX += 30;
-      }
-      player.style.left = playerX + "px";
-    } else if (event.key === " " && event.target == document.body) {
-      event.preventDefault(); //prevents space bar to scroll down on page (its default)
-      shootBullet();
     }
   });
 }
@@ -211,11 +249,18 @@ function createScore() {
 CREATE & POSITION PLAYER
 ====================*/
 
-function createPlayer() {
-  player = document.createElement("div");
-  player.id = "player";
-  gameContainer.appendChild(player);
-  positionPlayer(player);
+function createPlayer(selectedPlayer) {
+  if (selectedPlayer === "MF") {
+    player = document.createElement("div");
+    player.id = "player-MF";
+    gameContainer.appendChild(player);
+    positionPlayer(player);
+  } else if (selectedPlayer === "XW") {
+    player = document.createElement("div");
+    player.id = "player-XW";
+    gameContainer.appendChild(player);
+    positionPlayer(player);
+  }
 }
 
 function positionPlayer(player) {
@@ -230,7 +275,7 @@ CREATE ENEMY GRID
 
 function createEnemyGrid() {
   for (let i = 0; i < totalNumEnemies; i++) {
-    createEnemy();
+    createEnemy(i);
   }
 }
 
@@ -239,9 +284,13 @@ CREATE EACH ENEMY, ADD TO ENEMIES ARRAY AND CALL POSITION ENEMY FUNCTION
 - createEnemy() -> create a div with class enemy, append and add enemy to enemies array
 - calls positionEnemy() passing enemy and total number of enemies in the array (enemies.length -1) at each iteration
 ====================*/
-function createEnemy() {
+function createEnemy(enemySwitcher) {
   const enemy = document.createElement("div");
-  enemy.className = "enemy";
+  if (enemySwitcher % 2) {
+    enemy.className = "enemy-1";
+  } else {
+    enemy.className = "enemy-2";
+  }
   gameContainer.appendChild(enemy);
   enemies.push(enemy);
   positionEnemy(enemy, enemies.length - 1);
@@ -319,7 +368,8 @@ function moveEnemies() {
   if (moveDown) {
     enemies.forEach(function (enemy) {
       const enemyY = parseInt(enemy.style.top);
-      enemy.style.top = enemyY + 20 + "px";
+      enemy.style.top = enemyY + enemyXMoveSpeed + waveCounter + "px";
+      //using waveCounter to the equation to increase speed of enemy and increase difficulty as game progress through each wave
     });
     //moveDown and moveDownAgain used to control going down at each edge. Will be opposites to each other
     moveDown = false;
@@ -329,21 +379,24 @@ function moveEnemies() {
   } else if (moveLeft) {
     enemies.forEach(function (enemy) {
       const enemyX = parseInt(enemy.style.left);
-      enemy.style.left = enemyX - 4 + "px"; //change speed of movement LEFT / RIGHT on how many px added
+      enemy.style.left = enemyX - enemyXMoveSpeed - waveCounter + "px"; //change speed of movement LEFT / RIGHT on how many px added
+      //using waveCounter to the equation to increase speed of enemy and increase difficulty as game progress through each wave
     });
 
     //MOVE RIGHT - if moveRight is true goes through the array of enemies moving all of them right
   } else if (moveRight) {
     enemies.forEach(function (enemy) {
       const enemyX = parseInt(enemy.style.left);
-      enemy.style.left = enemyX + 4 + "px"; //change speed of movement LEFT / RIGHT on how many px added
+      enemy.style.left = enemyX + enemyXMoveSpeed + waveCounter + "px"; //change speed of movement LEFT / RIGHT on how many px added
+      //using waveCounter to the equation to increase speed of enemy and increase difficulty as game progress through each wave
     });
 
     //LEFT EDGE MOVE DOWN -> if moveDownAgain is true goes through the array of enemies moving all of them down
   } else if (moveDownAgain) {
     enemies.forEach(function (enemy) {
       const enemyY = parseInt(enemy.style.top);
-      enemy.style.top = enemyY + 20 + "px";
+      enemy.style.top = enemyY + enemyXMoveSpeed + waveCounter + "px";
+      //using waveCounter to the equation to increase speed of enemy and increase difficulty as game progress through each wave
     });
     //moveDown and moveDownAgain used to control going down at each edge. Will be opposites to each other
     moveDownAgain = false;
@@ -382,8 +435,7 @@ POSITION BULLET RELATIVE TO PLAYER'S POSITION AND CALLS MOVE BULLET FUNCTION
 - playerX -> Calculates the position for the bullet on the X axis | horizontal
   - Takes the left position of the player (playerPos.left) and adds half of the player's width (playerPos.width / 2) to position bullet horizontally at the center of the player element
 - playerY -> Calculates the position for the bullet on the Y axis | vertical. 
-  - Takes the top position of the player (playerPos.top)
-
+  - Takes the top position of the player (playerPos.top) 
 ====================*/
 
 function positionBullet(bullet) {
@@ -408,7 +460,7 @@ function moveBullet(bullet) {
     return;
   }
 
-  bullet.style.top = bulletY - 7 + "px";
+  bullet.style.top = bulletY - bulletMoveSpeed + "px";
   checkCollision(bullet);
 
   requestAnimationFrame(function () {
@@ -450,13 +502,13 @@ function checkCollision(bullet) {
 }
 
 /*====================
-SCORE CONTROLLER
+SCORE & WAVES CONTROLLER
 - Increment score
 - update score CSS value
 ====================*/
 
 function incrementScore() {
-  currScore += 10;
+  currScore += 10 + waveCounter * 2; //get more points per enemy as you progress through waves
   const score = document.getElementById("score-value");
   score.innerHTML = currScore;
 }
@@ -472,8 +524,8 @@ SAVE HIGH SCORES
 - Get high score array from local storage, add score to array, sort (descending), remove scores beyond top 5, update local storage
 ====================*/
 function saveHighScore(playerName, waves, score) {
-  // Get existing high scores from localStorage or initialize an empty array
-  highScores = JSON.parse(localStorage.getItem("highScores"));
+  // Get existing high scores from localStorage
+  highScores = getHighScores();
 
   // Create a new high score object
   const newHighScore = { playerName, waves, score };
@@ -484,9 +536,9 @@ function saveHighScore(playerName, waves, score) {
   // Sort the high scores array in descending order based on the score (wave follows score)
   highScores.sort((a, b) => b.score - a.score);
 
-  // Remove any extra scores beyond the top 10
-  if (highScores.length > 10) {
-    highScores.splice(10);
+  // Remove any extra scores beyond the top 5
+  if (highScores.length > 5) {
+    highScores.splice(5);
   }
 
   // Store the updated high scores array in localStorage
@@ -507,8 +559,14 @@ GAME OVER FUNCTION
 ====================*/
 function gameOver() {
   gameOverAudio.play();
-  // alert("Game Over");
-  const playerName = "Marcos";
+  let lastOfTopHighScores = getHighScores();
+  lastOfTopHighScores = lastOfTopHighScores[lastOfTopHighScores.length - 1]; //get the last in the HighScores array
+
+  let playerName = "NotTop10";
+  if (currScore > lastOfTopHighScores.score) {
+    //Prompt to get name only if score is higher than the last High Score (10th highest score)
+    playerName = window.prompt("Top 10 High Score! Enter your name:");
+  }
   const waves = waveCounter;
   const score = currScore;
   saveHighScore(playerName, waves, score);
