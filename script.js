@@ -43,6 +43,7 @@ function init() {
   shootAudio.volume = 0.5;
   startAudio.volume = 0.5;
   backgroundAudio.volume = 1; //background audio at 100% as it is already low
+  backgroundAudio.loop = true; //loop background music
   selectedPlayer = "MF"; //standard player is set to Millenium Falcon
   playerX = 0;
   playerMoveSpeed = 40; //player move at this px speed at each keystroke (left/right)
@@ -502,7 +503,7 @@ function checkCollision(bullet) {
 }
 
 /*====================
-SCORE & WAVES CONTROLLER
+In-GAME SCORE & WAVES CONTROLLER
 - Increment score
 - update score CSS value
 ====================*/
@@ -562,13 +563,13 @@ function gameOver() {
   let lastOfTopHighScores = getHighScores();
   lastOfTopHighScores = lastOfTopHighScores[lastOfTopHighScores.length - 1]; //get the last in the HighScores array
 
-  let playerName = "NotTop10";
+  let playerName = "NotTop5";
   if (currScore > lastOfTopHighScores.score) {
     //Prompt to get name only if score is higher than the last High Score (10th highest score)
     playerName = window.prompt("Top 10 High Score! Enter your name:");
   }
-  const waves = waveCounter;
-  const score = currScore;
+  let waves = waveCounter;
+  let score = currScore;
   saveHighScore(playerName, waves, score);
   reinit();
 }
