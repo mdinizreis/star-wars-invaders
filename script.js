@@ -562,9 +562,11 @@ function gameOver() {
   gameOverAudio.play();
   let lastOfTopHighScores = getHighScores();
   lastOfTopHighScores = lastOfTopHighScores[lastOfTopHighScores.length - 1]; //get the last in the HighScores array
-
+  lastOfTopHighScores = lastOfTopHighScores.score;
+  console.log(lastOfTopHighScores);
   let playerName = "NotTop5";
-  if (currScore > lastOfTopHighScores.score) {
+
+  if (currScore > lastOfTopHighScores) {
     //Prompt to get name only if score is higher than the last High Score (10th highest score)
     playerName = window.prompt("Top 10 High Score! Enter your name:");
   }
