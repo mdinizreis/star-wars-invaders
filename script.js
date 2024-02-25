@@ -561,14 +561,20 @@ GAME OVER FUNCTION
 function gameOver() {
   gameOverAudio.play();
   let lastOfTopHighScores = getHighScores();
-  lastOfTopHighScores =
-    lastOfTopHighScores[lastOfTopHighScores.length - 1].score; //get the score property of the last item in the HighScores array
+  let lastScore;
+  let playerName;
 
-  let playerName = "NotTop5";
+  if (lastOfTopHighScores.length > 4) {
+    lastScore = lastOfTopHighScores[lastOfTopHighScores.length - 1].score;
+  } else {
+    lastScore = 0;
+  }
 
-  if (currScore > lastOfTopHighScores) {
+  if (currScore > lastScore && currScore > 0) {
     //Prompt to get name only if score is higher than the last High Score (10th highest score)
     playerName = window.prompt("Top 10 High Score! Enter your name:");
+  } else {
+    playerName = "R2D2";
   }
 
   let waves = waveCounter;
