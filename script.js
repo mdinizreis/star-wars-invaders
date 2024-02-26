@@ -51,7 +51,7 @@ function init() {
   bulletMoveSpeed = 7; //speed in px that bullet moves up in the Y axis
   waveCounter = 0;
   enemyYMoveSpeed = 20; //speed enemies move vertically
-  enemyXMoveSpeed = 4; //speed enemies move horizontally 4
+  enemyXMoveSpeed = 9; //speed enemies move horizontally 4
   moveRight = true; //variables used by moveEnemies() for moving grid of enemies. Right = true as that is the first direction
   moveLeft = false;
   moveDown = false;
@@ -322,7 +322,7 @@ function moveEnemies() {
   enemyReachedEdge = false; //to control when we reach the left/right edge of gameCountainer
   enemyReachedBottom = false; //to control when we reach the bottom edge of gameCountainer
 
-  //keep track of the leftmost (first) and rightmost(last) x-coordinate of the enemies.
+  //keep track of the leftmost and rightmost x-coordinate of the enemies.
   //The Infinity global property is a numeric value representing infinity.
   let firstEnemyX = Infinity; //ensures that any subsequent x-coordinate value of an enemy will be SMALLER than firstEnemyX.
   let lastEnemyX = -Infinity; //ensures that any subsequent x-coordinate value of an enemy will be GREATER than firstEnemyX.
