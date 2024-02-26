@@ -46,7 +46,7 @@ function init() {
   backgroundAudio.loop = true; //loop background music
   selectedPlayer = "MF"; //standard player is set to Millenium Falcon
   playerX = 0;
-  playerMoveSpeed = 40; //player move at this px speed at each keystroke (left/right)
+  playerMoveSpeed = 50; //player move at this px speed at each keystroke (left/right)
   currScore = 0; //initial score value
   bulletMoveSpeed = 7; //speed in px that bullet moves up in the Y axis
   waveCounter = 0;
@@ -169,6 +169,7 @@ EVENT LISTENER TO CAPTURE KEYBOARD INPUT FOR STARTING GAME, PLAYER MOVEMENT AND 
 ====================*/
 function createEventListener() {
   document.addEventListener("keydown", function (event) {
+    //right and left arrows on initial screen allow for capturing player ship choice
     if (!gameStarted) {
       if (event.key === "ArrowLeft" && event.target == document.body) {
         choosePlayerType.innerText = "< Millenium Falcon >";
@@ -217,7 +218,7 @@ function createEventListener() {
 }
 
 /*====================
-CREATE SCORE TOP RIGHT DISPLAY ON THE DOM - AFTER GAME START
+CREATE SCREEN TOP RIGHT SCORE ON THE DOM - AFTER GAME START
 ====================*/
 
 function createScore() {
@@ -253,6 +254,7 @@ CREATE & POSITION PLAYER
 function createPlayer(selectedPlayer) {
   if (selectedPlayer === "MF") {
     player = document.createElement("div");
+    //calls id on CSS depending on ship selection on initial screen
     player.id = "player-MF";
     gameContainer.appendChild(player);
     positionPlayer(player);
@@ -287,6 +289,7 @@ CREATE EACH ENEMY, ADD TO ENEMIES ARRAY AND CALL POSITION ENEMY FUNCTION
 ====================*/
 function createEnemy(enemySwitcher) {
   const enemy = document.createElement("div");
+  //Get different enemy id
   if (enemySwitcher % 2) {
     enemy.className = "enemy-1";
   } else {
@@ -320,6 +323,7 @@ function moveEnemies() {
   enemyReachedBottom = false; //to control when we reach the bottom edge of gameCountainer
 
   //keep track of the leftmost (first) and rightmost(last) x-coordinate of the enemies.
+  //The Infinity global property is a numeric value representing infinity.
   let firstEnemyX = Infinity; //ensures that any subsequent x-coordinate value of an enemy will be SMALLER than firstEnemyX.
   let lastEnemyX = -Infinity; //ensures that any subsequent x-coordinate value of an enemy will be GREATER than firstEnemyX.
 
@@ -424,7 +428,7 @@ function shootBullet() {
     bullets.push(bullet);
     positionBullet(bullet);
 
-    //otherwise set canShoot to false and start a timer to reset canShoot to true after 0.5 seconds (to limit the rate of fire to 2 missiles per second).
+    //otherwise set canShoot to false and start a timer to reset canShoot to true after 0.5 seconds (to limit the rate of fire to 2 bullets per second).
     canShoot = false;
     setTimeout(function () {
       canShoot = true;
@@ -494,6 +498,7 @@ function checkCollision(bullet) {
       enemies.splice(enemies.indexOf(enemy), 1);
       incrementScore();
 
+      //respawn new enemy grid if player killed them all
       if (enemies.length === 0) {
         createEnemyGrid();
         incrementWave();
@@ -509,11 +514,11 @@ In-GAME SCORE & WAVES CONTROLLER
 ====================*/
 
 function incrementScore() {
-  currScore += 10 + waveCounter * 2; //get more points per enemy as you progress through waves
+  currScore += 10 + waveCounter * 2; //using waveCounter to get more points per enemy as you progress through waves
   const score = document.getElementById("score-value");
   score.innerHTML = currScore;
 }
-
+//increment wave counter for every new enemy grid creation
 function incrementWave() {
   waveCounter += 1;
   const wave = document.getElementById("wave-value");
@@ -564,6 +569,7 @@ function gameOver() {
   let lastScore;
   let playerName;
 
+  //if high score has all 5 positions get the 5th position score
   if (lastOfTopHighScores.length > 4) {
     lastScore = lastOfTopHighScores[lastOfTopHighScores.length - 1].score;
   } else {
@@ -574,6 +580,7 @@ function gameOver() {
     //Prompt to get name only if score is higher than the last High Score (10th highest score)
     playerName = window.prompt("Top 10 High Score! Enter your name:");
   } else {
+    //getting any playerName otherwise just to pass it to saveHighScore funtion that will discart it as it does not make it to top5
     playerName = "R2D2";
   }
 

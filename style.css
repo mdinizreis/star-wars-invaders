@@ -1,7 +1,7 @@
 /*====================
 GAME CONTAINER SETTINGS
 - Size: 1200 x 800px (width x height)
-- Background image: space photo taken from telescope Hubble https://esahubble.org/images/heic1304c/ of a Galaxy Far far away (galaxy cluster Abell 68)
+- Background image: photo taken by space telescope Hubble of a Galaxy Far far away (galaxy cluster Abell 68) https://esahubble.org/images/heic1304c/ 
 ====================*/
 #game-container {
   position: absolute;
@@ -13,7 +13,7 @@ GAME CONTAINER SETTINGS
 }
 
 /*====================
-INITIAL / PRE-GAME SCREEN SETTINGS
+INITIAL / PRE-GAME SCREEN CSS SETTINGS
 ====================*/
 #initial-screen {
   position: absolute;
