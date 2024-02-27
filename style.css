@@ -37,7 +37,7 @@ INITIAL / PRE-GAME SCREEN CSS SETTINGS
   animation: animate 1.5s linear infinite;
 }
 
-/* Blinking animation settings for enter-to-play */
+/* CSS at-rule for Blinking animation settings for enter-to-play */
 @keyframes animate {
   0% {
     opacity: 0;

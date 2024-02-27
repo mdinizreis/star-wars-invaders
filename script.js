@@ -51,7 +51,7 @@ function init() {
   bulletMoveSpeed = 7; //speed in px that bullet moves up in the Y axis
   waveCounter = 0;
   enemyYMoveSpeed = 20; //speed enemies move vertically
-  enemyXMoveSpeed = 9; //speed enemies move horizontally 4
+  enemyXMoveSpeed = 9; //speed enemies move horizontally
   moveRight = true; //variables used by moveEnemies() for moving grid of enemies. Right = true as that is the first direction
   moveLeft = false;
   moveDown = false;
@@ -578,10 +578,10 @@ function gameOver() {
 
   if (currScore > lastScore && currScore > 0) {
     //Prompt to get name only if score is higher than the last High Score (10th highest score)
-    playerName = window.prompt("Top 10 High Score! Enter your name:");
+    playerName = window.prompt("Top 5 High Score! Enter your name:");
   } else {
     //getting any playerName otherwise just to pass it to saveHighScore funtion that will discart it as it does not make it to top5
-    playerName = "R2D2";
+    playerName = " ";
   }
 
   let waves = waveCounter;
